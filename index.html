@@ -249,45 +249,43 @@
     ['Frontend', ['React', 'Tailwind', 'Blade', 'JavaScript', 'TypeScript']],
     ['Backend', ['Laravel', 'PHP', 'Python', 'FastAPI']],
     ['Mobile', ['Flutter', 'Dart']],
-    ['Game Dev', ['C++', 'Unreal Engine']],
+    ['Game Dev', ['C++', 'Unreal Engine', 'Raylib']],
     ['Database', ['PostgreSQL', 'MySQL']],
-    ['IA / ML', ['PyTorch', 'LLMs', 'Visão Computacional', 'OpenCV']]
+    ['IA / ML', ['PyTorch', 'LLMs', 'Visão Computacional', 'OpenCV', 'EasyOCR']]
   ];
 
   const projects = {
     pt: [
-      ['VisionFlow', 'Pipeline de visão computacional para detecção e tracking em tempo real.', 'PyTorch · Python · OpenCV'],
-      ['LaravelCommerce', 'Plataforma de e-commerce completa, do catálogo ao checkout.', 'Laravel · Blade · Tailwind · PostgreSQL'],
-      ['NeuralChat', 'Assistente conversacional com LLM e busca aumentada (RAG).', 'Python · PyTorch · FastAPI'],
-      ['PixelQuest', 'Protótipo de jogo com física e níveis proceduralmente gerados.', 'C++ · Unreal Engine']
+      ['Drakenval', 'Jogo de Estratégia em Tempo Real (RTS) em 3D com sistema de colisão e seleção de unidades.', 'C++ · Raylib'],
+      ['Ver-o-Guia', 'Plataforma web voltada para um guia de eventos locais.', 'Web · Domínios'],
+      ['VelocityNet', 'Ferramenta de visão computacional para monitoramento e medição da velocidade das águas nos canais urbanos.', 'Python · Visão Computacional · Machine Learning']
     ],
     en: [
-      ['VisionFlow', 'Computer-vision pipeline for real-time detection and tracking.', 'PyTorch · Python · OpenCV'],
-      ['LaravelCommerce', 'Full e-commerce platform, from catalog to checkout.', 'Laravel · Blade · Tailwind · PostgreSQL'],
-      ['NeuralChat', 'Conversational assistant with an LLM and retrieval (RAG).', 'Python · PyTorch · FastAPI'],
-      ['PixelQuest', 'Game prototype with physics and procedurally generated levels.', 'C++ · Unreal Engine']
+      ['Drakenval', '3D Real-Time Strategy (RTS) game featuring collision systems and unit selection.', 'C++ · Raylib'],
+      ['Ver-o-Guia', 'Web platform dedicated to a local event guide.', 'Web · Domains'],
+      ['VelocityNet', 'Computer vision tool for monitoring and measuring water speed in urban canals.', 'Python · Computer Vision · Machine Learning']
     ]
   };
 
   const education = {
     pt: [
-      ['2018 — 2023', 'Engenharia da Computação · Graduação', 'UFPA — Universidade Federal do Pará'],
-      ['2024 — 2025', 'Machine Learning · Especialização', 'PUC Minas']
+      ['2006 — 2011', 'ENGENHARIA DA COMPUTAÇÃO · Graduação', 'UFPA — Universidade Federal do Pará'],
+      ['2024 — 2026', 'INTELIGÊNCIA ARTIFICIAL E APRENDIZADO DE MÁQUINA · Especialização', 'PUC Minas']
     ],
     en: [
-      ['2018 — 2023', "Computer Engineering · Bachelor's", 'UFPA — Federal University of Pará'],
-      ['2024 — 2025', 'Machine Learning · Graduate Cert.', 'PUC Minas']
+      ['2006 — 2011', "Computer Engineering · Bachelor's", 'UFPA — Federal University of Pará'],
+      ['2024 — 2026', 'Machine Learning · Graduate Cert.', 'PUC Minas']
     ]
   };
 
   const experience = {
     pt: [
-      ['2023 — agora', 'Desenvolvedor Full-Stack', 'Construindo aplicações web com Laravel + React e APIs em produção. (exemplo)'],
-      ['2022 — 2023', 'Engenheiro de ML (Estágio)', 'Treinamento e deploy de modelos de visão computacional. (exemplo)']
+      ['2011 — agora', 'Desenvolvedor Full-Stack', 'Construindo aplicações web com Laravel + React e APIs em produção. '],
+      ['2022 — agora', 'Engenheiro de ML (Estágio)', 'Treinamento e deploy de modelos de visão computacional.']
     ],
     en: [
-      ['2023 — now', 'Full-Stack Developer', 'Building web apps with Laravel + React and production APIs. (example)'],
-      ['2022 — 2023', 'ML Engineer (Intern)', 'Training and deploying computer-vision models. (example)']
+      ['2011 — now', 'Full-Stack Developer', 'Building web apps with Laravel + React and production APIs.'],
+      ['2022 — now', 'ML Engineer (Intern)', 'Training and deploying computer-vision models.']
     ]
   };
 
@@ -311,7 +309,7 @@
     return `<div class="muted lang-pt">Comandos disponíveis:</div><div class="muted lang-en">Available commands:</div><div class="chips">${rows}</div>`;
   }
   function renderAbout() {
-    const slot = `<image-slot id="pedro-photo" style="width:92px;height:92px" shape="rounded" radius="8" placeholder="foto"><img style="width:92px;height:92px" src="perfil.jpg"/></image-slot>`;
+    const slot = `<img id="pedro-photo" src="perfil.jpg" alt="Pedro Rodrigues Soares" style="width:92px;height:92px;border-radius:8px;object-fit:cover;border:1px solid var(--border);flex:none;" />`;
     return `<div class="whorow">${slot}<div><div class="bold">Pedro Rodrigues Soares</div><div class="line muted">${T.about[lang]}</div></div></div>`;
   }
   function renderSkills() {
