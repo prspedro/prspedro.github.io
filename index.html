@@ -273,8 +273,8 @@
       ['2024 — 2026', 'INTELIGÊNCIA ARTIFICIAL E APRENDIZADO DE MÁQUINA · Especialização', 'PUC Minas']
     ],
     en: [
-      ['2006 — 2011', "Computer Engineering · Bachelor's", 'UFPA — Federal University of Pará'],
-      ['2024 — 2026', 'Machine Learning · Graduate Cert.', 'PUC Minas']
+      ['2006 — 2011', 'Computer Engineering · B.Sc.', 'UFPA — Federal University of Pará'],
+      ['2024 — 2026', 'Artificial Intelligence & Machine Learning · Post-graduate Specialization', 'PUC Minas']
     ]
   };
 
@@ -288,6 +288,38 @@
       ['2022 — now', 'ML Engineer (Intern)', 'Training and deploying computer-vision models.']
     ]
   };
+  
+  // Função responsável pelo efeito de digitação preservando o HTML
+  async function typeWriter(html, parentElement, speed = 8) {
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    async function processNode(node, targetParent) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        const targetNode = document.createTextNode('');
+        targetParent.appendChild(targetNode);
+        // Digita cada letra com um pequeno atraso
+        for (let i = 0; i < text.length; i++) {
+          targetNode.textContent += text[i];
+          scrollDown();
+          await new Promise(r => setTimeout(r, speed));
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Clona a tag (ex: <span>, <img>, <button>) instantaneamente
+        const clone = node.cloneNode(false);
+        targetParent.appendChild(clone);
+        // Processa os filhos (textos dentro da tag)
+        for (const child of Array.from(node.childNodes)) {
+          await processNode(child, clone);
+        }
+      }
+    }
+
+    for (const child of Array.from(temp.childNodes)) {
+      await processNode(child, parentElement);
+    }
+  }
 
   function el(html) { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
 
@@ -295,11 +327,16 @@
     const p = el(`<div class="prompt"><span class="who">pedro</span><span class="sep">@</span><span class="who">soares</span><span class="sep">:</span><span class="dir">~</span><span class="sep">$</span> <span class="cmd">${cmd}</span></div>`);
     out.appendChild(p);
   }
-  function printBlock(node) {
+  async function printBlock(node) {
     const b = document.createElement('div');
     b.className = 'block';
-    if (typeof node === 'string') b.innerHTML = node; else b.appendChild(node);
     out.appendChild(b);
+    
+    if (typeof node === 'string') {
+      await typeWriter(node, b); // Usa o efeito de digitação
+    } else {
+      b.appendChild(node);
+    }
     scrollDown();
   }
   function scrollDown() { requestAnimationFrame(() => { screen.scrollTop = screen.scrollHeight; }); }
@@ -332,56 +369,70 @@
   function renderContact() {
     return `<dl class="kv">
       <dt>email</dt><dd><a href="mailto:prspedro.soares@gmail.com">prspedro.soares@gmail.com</a></dd>
-      <dt>github</dt><dd><a href="https://github.com/pedrosoares" target="_blank" rel="noopener">github.com/pedrosoares</a> <span class="dim">(exemplo)</span></dd>
-      <dt>linkedin</dt><dd><a href="https://linkedin.com/in/pedro-rodrigues-soares" target="_blank" rel="noopener">linkedin.com/in/pedro-rodrigues-soares</a> <span class="dim">(exemplo)</span></dd>
+      <dt>github</dt><dd><a href="https://github.com/prspedro" target="_blank" rel="noopener">https://github.com/prspedro</a> <span class="dim"></span></dd>
+      <dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/pedro-soares-01867648/" target="_blank" rel="noopener">https://www.linkedin.com/in/pedro-soares-01867648/</a> <span class="dim"></span></dd>
     </dl>`;
   }
-
   const handlers = {
-    help: () => printBlock(renderHelp()),
-    about: () => printBlock(renderAbout()),
-    whoami: () => printBlock(renderAbout()),
-    skills: () => printBlock(renderSkills()),
-    projects: () => printBlock(renderProjects()),
-    education: () => printBlock(renderTimeline(education)),
-    experience: () => printBlock(renderTimeline(experience)),
-    contact: () => printBlock(renderContact()),
-    clear: () => { out.innerHTML = ''; },
-    lang: () => { toggleLang(); },
-    ls: () => printBlock(`<span class="muted">about  skills  projects  education  experience  contact</span>`)
+    help: async () => await printBlock(renderHelp()),
+    about: async () => await printBlock(renderAbout()),
+    whoami: async () => await printBlock(renderAbout()),
+    skills: async () => await printBlock(renderSkills()),
+    projects: async () => await printBlock(renderProjects()),
+    education: async () => await printBlock(renderTimeline(education)),
+    experience: async () => await printBlock(renderTimeline(experience)),
+    contact: async () => await printBlock(renderContact()),
+    clear: async () => { out.innerHTML = ''; await printBlock(renderHelp()); },
+    lang: async () => { await toggleLang(); },
+    ls: async () => await printBlock(`<span class="muted">about  skills  projects  education  experience  contact</span>`)
   };
 
-  function run(raw) {
+  async function run(raw) {
     const cmd = (raw || '').trim().toLowerCase();
     if (!cmd) { printPrompt(''); return; }
+    
+    // Desabilita o input enquanto o terminal "pensa" e digita
+    input.disabled = true;
     printPrompt(cmd);
-    if (handlers[cmd]) handlers[cmd]();
-    else printBlock(T.notfound[lang](cmd));
+    
+    if (handlers[cmd]) await handlers[cmd]();
+    else await printBlock(T.notfound[lang](cmd));
+    
+    input.disabled = false;
+    input.focus();
     scrollDown();
   }
 
   // boot sequence
-  function boot() {
-    T.welcome[lang].forEach((l, i) => printBlock(`<div class="line">${l}</div>`));
-    printBlock(renderHelp());
+  async function boot() {
+    input.disabled = true;
+    for (const l of T.welcome[lang]) {
+      await printBlock(`<div class="line">${l}</div>`);
+    }
+    await printBlock(renderHelp());
+    input.disabled = false;
+    input.focus();
   }
 
-  function toggleLang() {
+  async function toggleLang() {
     lang = lang === 'pt' ? 'en' : 'pt';
     document.body.dataset.lang = lang;
     document.getElementById('lpt').classList.toggle('on', lang === 'pt');
     document.getElementById('len').classList.toggle('on', lang === 'en');
     out.innerHTML = '';
-    boot();
+    await boot();
   }
 
   document.getElementById('langbtn').addEventListener('click', toggleLang);
   out.addEventListener('click', (e) => {
+    // Evita cliques nos botões enquanto a digitação acontece
+    if (input.disabled) return; 
+    
     const chip = e.target.closest('[data-cmd]');
     if (chip) { run(chip.dataset.cmd); input.focus(); }
   });
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { run(input.value); input.value = ''; }
+    if (e.key === 'Enter' && !input.disabled) { run(input.value); input.value = ''; }
   });
   document.querySelector('.window').addEventListener('click', (e) => {
     if (!e.target.closest('a,button,image-slot,input')) input.focus();
