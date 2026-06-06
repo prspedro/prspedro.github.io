@@ -311,7 +311,7 @@
     return `<div class="muted lang-pt">Comandos disponíveis:</div><div class="muted lang-en">Available commands:</div><div class="chips">${rows}</div>`;
   }
   function renderAbout() {
-    const slot = `<image-slot id="pedro-photo" style="width:92px;height:92px" shape="rounded" radius="8" placeholder="foto"></image-slot>`;
+    const slot = `<image-slot id="pedro-photo" style="width:92px;height:92px" shape="rounded" radius="8" placeholder="foto"><img style="width:92px;height:92px" src="perfil.jpg"/></image-slot>`;
     return `<div class="whorow">${slot}<div><div class="bold">Pedro Rodrigues Soares</div><div class="line muted">${T.about[lang]}</div></div></div>`;
   }
   function renderSkills() {
