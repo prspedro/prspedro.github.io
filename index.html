@@ -1,89 +1,397 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfólio Pedro Rodrigues Soares</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,700;0,900;1,300;1,700;1,900&display=swap" rel="stylesheet">
-  <!-- Dev Icon Fonts -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@master/devicon.min.css">
-  <!-- CSS do Projeto -->
-  <link rel="stylesheet" href="css/styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pedro Rodrigues Soares — Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="image-slot.js"></script>
+<script src="tech-icons.js"></script>
+<style>
+  :root {
+    --bg: oklch(0.16 0.012 250);
+    --bg-2: oklch(0.19 0.013 250);
+    --bar: oklch(0.22 0.013 250);
+    --border: oklch(0.30 0.012 250);
+    --text: oklch(0.90 0.006 250);
+    --muted: oklch(0.62 0.012 250);
+    --dim: oklch(0.50 0.012 250);
+    --accent: oklch(0.65 0.17 250);
+    --accent-soft: oklch(0.65 0.17 250 / 0.14);
+    --green: oklch(0.74 0.16 155);
+    --amber: oklch(0.80 0.13 80);
+    --red: oklch(0.68 0.18 25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, oklch(0.65 0.17 250 / 0.10), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 15px;
+    line-height: 1.65;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 3vw, 40px);
+    min-height: 100vh;
+  }
+  .window {
+    width: min(960px, 100%);
+    height: min(86vh, 760px);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 40px 120px -30px rgba(0,0,0,0.7), 0 0 0 1px oklch(0.65 0.17 250 / 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .titlebar {
+    height: 44px;
+    flex: none;
+    background: var(--bar);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 16px;
+  }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: var(--red); }
+  .dot.y { background: var(--amber); }
+  .dot.g { background: var(--green); }
+  .titlebar .path { color: var(--dim); font-size: 13px; letter-spacing: 0.02em; }
+  .titlebar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .langbtn {
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .langbtn:hover { color: var(--text); border-color: var(--accent); }
+  .langbtn .on { color: var(--accent); }
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px 24px 8px;
+    scroll-behavior: smooth;
+  }
+  .screen::-webkit-scrollbar { width: 10px; }
+  .screen::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+  .screen::-webkit-scrollbar-track { background: transparent; }
+
+  .line { white-space: pre-wrap; word-break: break-word; }
+  .block { margin: 2px 0 16px; }
+  .muted { color: var(--muted); }
+  .dim { color: var(--dim); }
+  .accent { color: var(--accent); }
+  .green { color: var(--green); }
+  .amber { color: var(--amber); }
+  .bold { font-weight: 700; color: var(--text); }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--accent); }
+
+  .prompt { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .prompt .who { color: var(--green); }
+  .prompt .sep { color: var(--dim); }
+  .prompt .dir { color: var(--accent); }
+  .cmd { color: var(--text); }
+
+  .inputline { display: flex; gap: 8px; align-items: baseline; padding-bottom: 18px; }
+  .inputline input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: inherit;
+    caret-color: var(--accent);
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 2px; }
+  .chip {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
+  .chip .k { color: var(--accent); }
+
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 2px 18px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { color: var(--text); }
+  .skillrow { display: grid; grid-template-columns: 150px 1fr; gap: 3px 16px; align-items: start; margin-bottom: 7px; }
+  .skillrow .label { color: var(--accent); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 3px 9px; font-size: 13px; }
+
+  .project { border-left: 2px solid var(--border); padding: 2px 0 2px 14px; margin-bottom: 14px; }
+  .project:hover { border-left-color: var(--accent); }
+  .project .ptitle { color: var(--text); font-weight: 700; }
+  .project .pmeta { color: var(--dim); font-size: 13px; }
+
+  .avatar { width: 92px; height: 92px; border: 1px solid var(--border); border-radius: 8px; }
+  .whorow { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+
+  .cursor { display: inline-block; width: 9px; height: 1.05em; background: var(--accent); vertical-align: text-bottom; animation: blink 1.05s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  image-slot::part(frame) { background: oklch(0.25 0.012 250); }
+  image-slot::part(empty) { color: oklch(0.74 0.012 250); }
+
+  .lang-en { display: none; }
+  body[data-lang="en"] .lang-en { display: inline; }
+  body[data-lang="en"] .lang-pt { display: none; }
+  .b.lang-en { display: none; }
+  body[data-lang="en"] .b.lang-en { display: block; }
+  body[data-lang="en"] .b.lang-pt { display: none; }
+
+  @media (max-width: 560px) {
+    body { padding: 0; }
+    .window { height: 100vh; width: 100%; border-radius: 0; border: none; }
+    .kv, .skillrow { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
-<body>
-  <main id="container">
-    <aside id="bio-container">
-      <h2>Pedro Rodrigues Soares</h2>
-      <img id="bio-image" src="img/perfil.jpg" alt="Pedro Rodrigues Soares">
-      <p>Olá, meu nome é Pedro Rodrigues Soares e sou <span class="highlight">Engenheiro da Computação</span>.</p>
-      <p id="welcome-text">Seja bem-vindo!</p>
-      <ul id="social-container">
-        <li><a href="#" target="_blank"><ion-icon name="logo-facebook"></ion-icon></a></li>
-        <li><a href="https://linkedin.com/in/pedro-soares-01867648" target="_blank"><ion-icon name="logo-linkedin"></ion-icon></a></li>
-        <li><a href="#" target="_blank"><ion-icon name="logo-instagram"></ion-icon></a></li>
-      </ul>
-      <div id="email-container">
-        <ion-icon name="mail-outline"></ion-icon><a href="mailto:prspedro@uol.com.br">prspedro@uol.com.br</a>
+<body data-lang="pt">
+  <main class="window" role="application" aria-label="Terminal portfolio">
+    <header class="titlebar">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <span class="path">pedro@soares: ~/portfolio</span>
+      <div class="right">
+        <button class="langbtn" id="langbtn" aria-label="Toggle language">
+          <span class="on" id="lpt">PT</span> <span class="dim">/</span> <span id="len">EN</span>
+        </button>
       </div>
-    </aside>
-    <section id="about-container">
-      <h1 id="name">Pedro Rodrigues Soares</h1>
-      <p id="title"><span class="highlight">Desenvolvedor FullStack</span></p>
-      <p class="description">Sou um desenvolvedor especializado em e-commerces, gosto de participar do projeto desde a <span class="highlight">definição das regras de negócio e levantamento de requisito</span> até o <span class="highlight">deploy da aplicação</span>.</p>
-      <p class="description">Atuo tanto no <span class="highlight">front</span> como no <span class="highlight">back-end</span>, e amo tecnologia, estudo todos os dias para me tornar cada vez melhor e escrever código de qualidade.</p>
-      <p id="title"><span class="highlight">Especialista em Inteligência Artificial e Aprendizado de Máquina</span></p>
-      <p class="description">Minha paixão é transformar dados em <span class="highlight">insights</span> valiosos e aplicar modelos preditivos para resolver problemas complexos.</p>
-      <a href="#" id="btn-projects"><ion-icon name="share-social-outline"></ion-icon> <span>Ver Projetos</span></a>
-      <h2 id="skills-section-title">Minhas Skills</h2>
-      <p class="description">Conheça as tecnologias que domino:</p>
-      <div id="skills-container">
-        <div class="skills-box">
-          <p class="skills-title">Front-end</p>
-          <i class="devicon-html5-plain colored"></i>
-          <i class="devicon-css3-plain colored"></i>
-          <i class="devicon-javascript-plain colored"></i>
+    </header>
+    <div class="screen" id="screen">
+      <div id="output"></div>
+      <div class="inputline">
+        <div class="prompt" aria-hidden="true">
+          <span class="who">pedro</span><span class="sep">@</span><span class="who">soares</span><span class="sep">:</span><span class="dir">~</span><span class="sep">$</span>
         </div>
-        <div class="skills-box">
-          <p class="skills-title">Back-end</p>
-          <i class="devicon-php-plain colored"></i>
-          <i class="devicon-java-plain-wordmark"></i>
-          <!-- <i class="devicon-nodejs-plain colored"></i> -->
-          <!-- <i class="devicon-python-plain colored"></i> -->
-        </div>
-        <div class="skills-box">
-            <p class="skills-title">Inteligência Artificial</p>
-            <i class="devicon-python-plain colored"></i>
-            <i class="devicon-pytorch-original colored"></i>
-            <!-- <i class="devicon-django-plain colored"></i> -->
-        </div>
-        <div class="skills-box">
-          <p class="skills-title">Databases</p>
-          <i class="devicon-mysql-plain colored"></i>
-          <i class="devicon-mongodb-plain colored"></i>
-        </div>
-        <div class="skills-box">
-          <p class="skills-title">Front-end Frameworks</p>
-          <i class="devicon-react-plain colored"></i>
-         <!-- <i class="devicon-vuejs-plain colored"></i> -->
-        </div>
-        <div class="skills-box">
-          <p class="skills-title">Back-end Frameworks</p>
-          <i class="devicon-laravel-plain colored"></i>
-          <!-- <i class="devicon-django-plain colored"></i> -->
-        </div>
-        
-        <div class="skills-box">
-          <p class="skills-title">Tools</p>
-          <i class="devicon-linux-plain"></i>
-          <i class="devicon-docker-plain colored"></i>
-          <i class="devicon-github-original-wordmark"></i>
-          <i class="devicon-git-plain colored"></i>
-        </div>
+        <input id="cmd" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Command input" />
       </div>
-    </section>
+    </div>
   </main>
-  <!-- Ion Icons -->
-  <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+
+<script>
+(function () {
+  const out = document.getElementById('output');
+  const screen = document.getElementById('screen');
+  const input = document.getElementById('cmd');
+  let lang = 'pt';
+
+  const T = {
+    welcome: {
+      pt: [
+        "<span class='green'>Pedro Rodrigues Soares</span> — Engenheiro da Computação",
+        "Bem-vindo(a) ao meu terminal. Digite um comando ou clique nas sugestões abaixo.",
+        "Dica: comece com <span class='accent'>help</span> ou <span class='accent'>about</span>."
+      ],
+      en: [
+        "<span class='green'>Pedro Rodrigues Soares</span> — Computer Engineer",
+        "Welcome to my terminal. Type a command or click a suggestion below.",
+        "Tip: start with <span class='accent'>help</span> or <span class='accent'>about</span>."
+      ]
+    },
+    help: {
+      pt: [
+        ['about',      'quem sou eu'],
+        ['skills',     'stack e tecnologias'],
+        ['projects',   'projetos em destaque'],
+        ['education',  'formação acadêmica'],
+        ['experience', 'experiência profissional'],
+        ['contact',    'como falar comigo'],
+        ['lang',       'alternar PT / EN'],
+        ['clear',      'limpar a tela']
+      ],
+      en: [
+        ['about',      'who I am'],
+        ['skills',     'stack & technologies'],
+        ['projects',   'featured projects'],
+        ['education',  'academic background'],
+        ['experience', 'work experience'],
+        ['contact',    'how to reach me'],
+        ['lang',       'switch PT / EN'],
+        ['clear',      'clear the screen']
+      ]
+    },
+    about: {
+      pt: "Olá! Sou o Pedro, engenheiro da computação apaixonado por transformar ideias em produtos.\nGosto de transitar entre áreas — num dia ajusto um pipeline de visão computacional, no outro\nentrego uma interface caprichada. Curioso por natureza e sempre aprendendo algo novo.",
+      en: "Hi! I'm Pedro, a computer engineer who loves turning ideas into real products.\nI enjoy moving between fields — one day tuning a computer-vision pipeline, the next\nshipping a polished interface. Curious by nature and always learning something new."
+    },
+    notfound: {
+      pt: (c) => `comando não encontrado: <span class='red'>${c}</span> — digite <span class='accent'>help</span>`,
+      en: (c) => `command not found: <span class='red'>${c}</span> — type <span class='accent'>help</span>`
+    }
+  };
+
+  const skills = [
+    ['Frontend', ['React', 'Tailwind', 'Blade', 'JavaScript', 'TypeScript']],
+    ['Backend', ['Laravel', 'PHP', 'Python', 'FastAPI']],
+    ['Mobile', ['Flutter', 'Dart']],
+    ['Game Dev', ['C++', 'Unreal Engine']],
+    ['Database', ['PostgreSQL', 'MySQL']],
+    ['IA / ML', ['PyTorch', 'LLMs', 'Visão Computacional', 'OpenCV']]
+  ];
+
+  const projects = {
+    pt: [
+      ['VisionFlow', 'Pipeline de visão computacional para detecção e tracking em tempo real.', 'PyTorch · Python · OpenCV'],
+      ['LaravelCommerce', 'Plataforma de e-commerce completa, do catálogo ao checkout.', 'Laravel · Blade · Tailwind · PostgreSQL'],
+      ['NeuralChat', 'Assistente conversacional com LLM e busca aumentada (RAG).', 'Python · PyTorch · FastAPI'],
+      ['PixelQuest', 'Protótipo de jogo com física e níveis proceduralmente gerados.', 'C++ · Unreal Engine']
+    ],
+    en: [
+      ['VisionFlow', 'Computer-vision pipeline for real-time detection and tracking.', 'PyTorch · Python · OpenCV'],
+      ['LaravelCommerce', 'Full e-commerce platform, from catalog to checkout.', 'Laravel · Blade · Tailwind · PostgreSQL'],
+      ['NeuralChat', 'Conversational assistant with an LLM and retrieval (RAG).', 'Python · PyTorch · FastAPI'],
+      ['PixelQuest', 'Game prototype with physics and procedurally generated levels.', 'C++ · Unreal Engine']
+    ]
+  };
+
+  const education = {
+    pt: [
+      ['2018 — 2023', 'Engenharia da Computação · Graduação', 'UFPA — Universidade Federal do Pará'],
+      ['2024 — 2025', 'Machine Learning · Especialização', 'PUC Minas']
+    ],
+    en: [
+      ['2018 — 2023', "Computer Engineering · Bachelor's", 'UFPA — Federal University of Pará'],
+      ['2024 — 2025', 'Machine Learning · Graduate Cert.', 'PUC Minas']
+    ]
+  };
+
+  const experience = {
+    pt: [
+      ['2023 — agora', 'Desenvolvedor Full-Stack', 'Construindo aplicações web com Laravel + React e APIs em produção. (exemplo)'],
+      ['2022 — 2023', 'Engenheiro de ML (Estágio)', 'Treinamento e deploy de modelos de visão computacional. (exemplo)']
+    ],
+    en: [
+      ['2023 — now', 'Full-Stack Developer', 'Building web apps with Laravel + React and production APIs. (example)'],
+      ['2022 — 2023', 'ML Engineer (Intern)', 'Training and deploying computer-vision models. (example)']
+    ]
+  };
+
+  function el(html) { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
+
+  function printPrompt(cmd) {
+    const p = el(`<div class="prompt"><span class="who">pedro</span><span class="sep">@</span><span class="who">soares</span><span class="sep">:</span><span class="dir">~</span><span class="sep">$</span> <span class="cmd">${cmd}</span></div>`);
+    out.appendChild(p);
+  }
+  function printBlock(node) {
+    const b = document.createElement('div');
+    b.className = 'block';
+    if (typeof node === 'string') b.innerHTML = node; else b.appendChild(node);
+    out.appendChild(b);
+    scrollDown();
+  }
+  function scrollDown() { requestAnimationFrame(() => { screen.scrollTop = screen.scrollHeight; }); }
+
+  function renderHelp() {
+    const rows = T.help[lang].map(([c, d]) => `<button class="chip" data-cmd="${c}"><span class="k">${c}</span> · ${d}</button>`).join('');
+    return `<div class="muted lang-pt">Comandos disponíveis:</div><div class="muted lang-en">Available commands:</div><div class="chips">${rows}</div>`;
+  }
+  function renderAbout() {
+    const slot = `<image-slot id="pedro-photo" style="width:92px;height:92px" shape="rounded" radius="8" placeholder="foto"></image-slot>`;
+    return `<div class="whorow">${slot}<div><div class="bold">Pedro Rodrigues Soares</div><div class="line muted">${T.about[lang]}</div></div></div>`;
+  }
+  function renderSkills() {
+    const rows = skills.map(([label, tags]) => {
+      const t = tags.map(x => `<span class="tag">${window.techIcon(x, 15)}${x}</span>`).join('');
+      return `<div class="skillrow"><span class="label">${label}</span><div class="tags">${t}</div></div>`;
+    }).join('');
+    return rows;
+  }
+  function renderProjects() {
+    return projects[lang].map(([t, d, m]) =>
+      `<div class="project"><div class="ptitle">${t}</div><div class="line muted">${d}</div><div class="pmeta">${m}</div></div>`
+    ).join('');
+  }
+  function renderTimeline(data) {
+    return data[lang].map(([when, what, where]) =>
+      `<div class="project"><div class="ptitle">${what} <span class="dim">· ${when}</span></div><div class="line muted">${where}</div></div>`
+    ).join('');
+  }
+  function renderContact() {
+    return `<dl class="kv">
+      <dt>email</dt><dd><a href="mailto:prspedro.soares@gmail.com">prspedro.soares@gmail.com</a></dd>
+      <dt>github</dt><dd><a href="https://github.com/pedrosoares" target="_blank" rel="noopener">github.com/pedrosoares</a> <span class="dim">(exemplo)</span></dd>
+      <dt>linkedin</dt><dd><a href="https://linkedin.com/in/pedro-rodrigues-soares" target="_blank" rel="noopener">linkedin.com/in/pedro-rodrigues-soares</a> <span class="dim">(exemplo)</span></dd>
+    </dl>`;
+  }
+
+  const handlers = {
+    help: () => printBlock(renderHelp()),
+    about: () => printBlock(renderAbout()),
+    whoami: () => printBlock(renderAbout()),
+    skills: () => printBlock(renderSkills()),
+    projects: () => printBlock(renderProjects()),
+    education: () => printBlock(renderTimeline(education)),
+    experience: () => printBlock(renderTimeline(experience)),
+    contact: () => printBlock(renderContact()),
+    clear: () => { out.innerHTML = ''; },
+    lang: () => { toggleLang(); },
+    ls: () => printBlock(`<span class="muted">about  skills  projects  education  experience  contact</span>`)
+  };
+
+  function run(raw) {
+    const cmd = (raw || '').trim().toLowerCase();
+    if (!cmd) { printPrompt(''); return; }
+    printPrompt(cmd);
+    if (handlers[cmd]) handlers[cmd]();
+    else printBlock(T.notfound[lang](cmd));
+    scrollDown();
+  }
+
+  // boot sequence
+  function boot() {
+    T.welcome[lang].forEach((l, i) => printBlock(`<div class="line">${l}</div>`));
+    printBlock(renderHelp());
+  }
+
+  function toggleLang() {
+    lang = lang === 'pt' ? 'en' : 'pt';
+    document.body.dataset.lang = lang;
+    document.getElementById('lpt').classList.toggle('on', lang === 'pt');
+    document.getElementById('len').classList.toggle('on', lang === 'en');
+    out.innerHTML = '';
+    boot();
+  }
+
+  document.getElementById('langbtn').addEventListener('click', toggleLang);
+  out.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-cmd]');
+    if (chip) { run(chip.dataset.cmd); input.focus(); }
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { run(input.value); input.value = ''; }
+  });
+  document.querySelector('.window').addEventListener('click', (e) => {
+    if (!e.target.closest('a,button,image-slot,input')) input.focus();
+  });
+
+  boot();
+  input.focus();
+})();
+</script>
 </body>
 </html>
