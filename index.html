@@ -146,6 +146,8 @@
   .project { border-left: 2px solid var(--border); padding: 2px 0 2px 14px; margin-bottom: 14px; }
   .project:hover { border-left-color: var(--accent); }
   .project .ptitle { color: var(--text); font-weight: 700; }
+  .project .ptitle a { border-bottom: 1px dashed transparent; }
+  .project .ptitle a:hover { border-bottom-color: var(--accent); }
   .project .pmeta { color: var(--dim); font-size: 13px; }
 
   .avatar { width: 92px; height: 92px; border: 1px solid var(--border); border-radius: 8px; }
@@ -254,16 +256,19 @@
     ['IA / ML', ['PyTorch', 'LLMs', 'Visão Computacional', 'OpenCV', 'EasyOCR']]
   ];
 
+  // Adicionado o quarto parâmetro com as URLs específicas (GitHub ou Site)
   const projects = {
     pt: [
-      ['Drakenval', 'Jogo de Estratégia em Tempo Real (RTS) em 3D com sistema de colisão e seleção de unidades.', 'C++ · Raylib'],
-      ['Ver-o-Guia', 'Plataforma web voltada para um guia de eventos locais.', 'Web · Domínios'],
-      ['VelocityNet', 'Ferramenta de visão computacional para monitoramento e medição da velocidade das águas nos canais urbanos.', 'Python · Visão Computacional · Machine Learning']
+      ['Drakenval', 'Jogo de Estratégia em Tempo Real (RTS) em 3D com sistema de colisão e seleção de unidades.', 'C++ · Raylib', 'https://github.com/prspedro/Drakenval'],
+      ['Drakenval (SDL)', 'Versão/Protótipo do ecossistema Drakenval utilizando a biblioteca gráfica SDL.', 'C++ · SDL', 'https://github.com/prspedro/Drakenval_sdl'],
+      ['Ver-o-Guia', 'Plataforma web voltada para um guia de eventos locais.', 'Web · Domínios', 'https://veroguia.com.br'],
+      ['VelocityNet', 'Ferramenta de visão computacional para monitoramento e medição da velocidade das águas nos canais urbanos.', 'Python · Visão Computacional · Machine Learning', 'https://github.com/prspedro/Velocitynet']
     ],
     en: [
-      ['Drakenval', '3D Real-Time Strategy (RTS) game featuring collision systems and unit selection.', 'C++ · Raylib'],
-      ['Ver-o-Guia', 'Web platform dedicated to a local event guide.', 'Web · Domains'],
-      ['VelocityNet', 'Computer vision tool for monitoring and measuring water speed in urban canals.', 'Python · Computer Vision · Machine Learning']
+      ['Drakenval', '3D Real-Time Strategy (RTS) game featuring collision systems and unit selection.', 'C++ · Raylib', 'https://github.com/prspedro/Drakenval'],
+      ['Drakenval (SDL)', 'Drakenval ecosystem prototype version built using the SDL graphics library.', 'C++ · SDL', 'https://github.com/prspedro/Drakenval_sdl'],
+      ['Ver-o-Guia', 'Web platform dedicated to a local event guide.', 'Web · Domains', 'https://veroguia.com.br'],
+      ['VelocityNet', 'Computer vision tool for monitoring and measuring water speed in urban canals.', 'Python · Computer Vision · Machine Learning', 'https://github.com/prspedro/Velocitynet']
     ]
   };
 
@@ -299,17 +304,14 @@
         const text = node.textContent;
         const targetNode = document.createTextNode('');
         targetParent.appendChild(targetNode);
-        // Digita cada letra com um pequeno atraso
         for (let i = 0; i < text.length; i++) {
           targetNode.textContent += text[i];
           scrollDown();
           await new Promise(r => setTimeout(r, speed));
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        // Clona a tag (ex: <span>, <img>, <button>) instantaneamente
         const clone = node.cloneNode(false);
         targetParent.appendChild(clone);
-        // Processa os filhos (textos dentro da tag)
         for (const child of Array.from(node.childNodes)) {
           await processNode(child, clone);
         }
@@ -333,7 +335,7 @@
     out.appendChild(b);
     
     if (typeof node === 'string') {
-      await typeWriter(node, b); // Usa o efeito de digitação
+      await typeWriter(node, b);
     } else {
       b.appendChild(node);
     }
@@ -356,9 +358,11 @@
     }).join('');
     return rows;
   }
+  
+  // Atualizado para englobar o título em uma tag <a> dinâmica com a URL alvo
   function renderProjects() {
-    return projects[lang].map(([t, d, m]) =>
-      `<div class="project"><div class="ptitle">${t}</div><div class="line muted">${d}</div><div class="pmeta">${m}</div></div>`
+    return projects[lang].map(([t, d, m, url]) =>
+      `<div class="project"><div class="ptitle"><a href="${url}" target="_blank" rel="noopener noreferrer">${t}</a></div><div class="line muted">${d}</div><div class="pmeta">${m}</div></div>`
     ).join('');
   }
   function renderTimeline(data) {
@@ -382,7 +386,7 @@
     education: async () => await printBlock(renderTimeline(education)),
     experience: async () => await printBlock(renderTimeline(experience)),
     contact: async () => await printBlock(renderContact()),
-    clear: async () => { out.innerHTML = ''; await printBlock(renderHelp()); },
+    clear: async () => { out.innerHTML = ''; await printBlock(renderHelp());},
     lang: async () => { await toggleLang(); },
     ls: async () => await printBlock(`<span class="muted">about  skills  projects  education  experience  contact</span>`)
   };
@@ -391,7 +395,6 @@
     const cmd = (raw || '').trim().toLowerCase();
     if (!cmd) { printPrompt(''); return; }
     
-    // Desabilita o input enquanto o terminal "pensa" e digita
     input.disabled = true;
     printPrompt(cmd);
     
@@ -403,7 +406,6 @@
     scrollDown();
   }
 
-  // boot sequence
   async function boot() {
     input.disabled = true;
     for (const l of T.welcome[lang]) {
@@ -425,7 +427,6 @@
 
   document.getElementById('langbtn').addEventListener('click', toggleLang);
   out.addEventListener('click', (e) => {
-    // Evita cliques nos botões enquanto a digitação acontece
     if (input.disabled) return; 
     
     const chip = e.target.closest('[data-cmd]');
